@@ -5,8 +5,9 @@ import json
 from zipfile import ZipFile
 from copy import deepcopy
 import uuid
+from natsort import natsorted
 
-VERSION = '1.0'
+VERSION = '1.1'
 
 
 def ppt2png(f):
@@ -77,11 +78,14 @@ if __name__ == '__main__':
 
         ppt2png(filepath)
         image_folder = os.path.join(folder, title)
-        images = os.listdir(image_folder)
-        images.sort()
+        images = natsorted(os.listdir(image_folder))
         print("building new .h5p file")
         add_to_json(os.path.splitext(filepath)[0] + '.h5p', image_folder, images, title)
         print("Converting successfully finished.")
+        input("Press Enter to delete temporary image (export) folder and close this window.")
+        for image in images:
+            os.remove(os.path.join(image_folder, image))
+        os.rmdir(image_folder)
     except Exception as e:
         print(e)
-    input("Press Enter to close this window.")
+        input("An error has occured. Press Enter to close this window.")
