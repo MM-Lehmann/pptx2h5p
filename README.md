@@ -11,3 +11,10 @@ Powerpoint to .h5p course presentation converter. Windows (+ MS Office) only.
    - As per MM instructions, right-click on your PPT, send to "ppt2h5p". Let the magic happen.
    - Upload load into your H5P repository
    - Profit.
+
+## How it works
+pptx2h5p makes use of the COM interface offered by an installed powerpoint on the host.
+1. opens the .pptx file in powerpoint
+2. exports each slide as .png file
+3. analyses images for width/height to adjust scaling for h5p
+4. imports the .png files into an .hp5 archive (it's a zip essentially)
