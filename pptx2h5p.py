@@ -10,6 +10,7 @@ from win32com import client
 from get_image_size import get_image_size
 
 VERSION = "1.2"
+YEAR = "2021"
 target_ratio = 2  # target aspect ratio for slides in h5p
 
 
@@ -92,7 +93,7 @@ if __name__ == "__main__":
         # Manifest
         print("Powerpoint to h5p Converter.")
         print(f"Version: {VERSION}")
-        print("Martin Lehmann, 2020")
+        print(f"Martin Lehmann, {YEAR}")
         print("Licence: BSD-2-Clause")
         print("Source code: https://github.com/MM-Lehmann/pptx2h5p")
         if len(sys.argv) != 2:
