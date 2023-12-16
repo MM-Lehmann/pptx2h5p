@@ -14,29 +14,29 @@ YEAR = "2021"
 target_ratio = 2  # target aspect ratio for slides in h5p
 
 
-def ppt2png(file):
+def ppt2image(file):
     try:
         powerpoint = client.Dispatch("Powerpoint.Application")
     except Exception as e:
         print("Powerpoint could not be opened", file=sys.stderr)
         raise e
-    try: # look if an active presentation is open
+    try:  # look if an active presentation is open
         assert powerpoint.ActivePresentation is not None
-        QUIT = False # don't quit powerpoint later
+        QUIT = False  # don't quit powerpoint later
     except:
-        QUIT = True # quit powerpoint later
+        QUIT = True  # quit powerpoint later
     ppt = powerpoint.Presentations.Open(file)
-    ppt.Export(file, "PNG")
+    ppt.Export(file, "jpg")
     ppt.Close()
-    if QUIT: # quit only if required
+    if QUIT:  # quit only if required
         powerpoint.Quit()
 
 
 def add_to_json(newfile, image_folder, images, title):
     reserved_files = ["content\content.json", ".\h5p.json"]
-    if getattr(sys, 'frozen', False):
+    if getattr(sys, "frozen", False):  # calling packaged binary
         basedir = sys._MEIPASS
-    else:
+    else:  # calling local script
         basedir = os.path.dirname(os.path.abspath(__file__))
     template = os.path.join(basedir, "template")
 
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
         # extract metadata
         filepath = os.path.abspath(sys.argv[1])
-        print(f"extracting images from {filepath}.")
+        print(f"extracting images from:\n\t {filepath}")
         folder = os.path.dirname(filepath)
         filename = os.path.basename(filepath)
         title = os.path.splitext(filename)[0]
@@ -115,16 +115,14 @@ if __name__ == "__main__":
             sys.exit(-1)
 
         # extract images
-        ppt2png(filepath)
+        ppt2image(filepath)
         image_folder = os.path.join(folder, title)
         images = natsorted(os.listdir(image_folder))
 
         # compile .hp5 file
         newfilename = os.path.splitext(filepath)[0] + ".h5p"
-        print(f"building new {newfilename} file")
-        add_to_json(
-            newfilename, image_folder, images, title
-        )
+        print(f"building new file:\n\t {newfilename}")
+        add_to_json(newfilename, image_folder, images, title)
         print("Converting successfully finished.")
         input(
             "Press Enter to delete temporary image (export) folder and close this window."
