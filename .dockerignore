@@ -1,0 +1,5 @@
+dist/
+data/
+template/
+__pycache__/
+.git/
