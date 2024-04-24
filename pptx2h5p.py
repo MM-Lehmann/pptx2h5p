@@ -9,8 +9,8 @@ from natsort import natsorted
 from win32com import client
 from get_image_size import get_image_size
 
-VERSION = "1.3"
-YEAR = "2023"
+VERSION = "1.3.1"
+YEAR = "2024"
 target_ratio = 2  # target aspect ratio for slides in h5p
 
 

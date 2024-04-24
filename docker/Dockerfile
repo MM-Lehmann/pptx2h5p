@@ -1,4 +1,4 @@
-FROM tobix/pywine:3.10
+FROM tobix/pywine
 MAINTAINER Martin Lehmann (https://github.com/MM-Lehmann)
 
 RUN wine pip install pip-tools --no-warn-script-location --no-cache
