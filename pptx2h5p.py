@@ -11,6 +11,7 @@ from get_image_size import get_image_size
 
 VERSION = "1.3.1"
 YEAR = "2024"
+AUTHOR = "Martin Lehmann"
 target_ratio = 2  # target aspect ratio for slides in h5p
 
 
@@ -96,8 +97,8 @@ if __name__ == "__main__":
     try:
         # Manifest
         print("Powerpoint to h5p Converter.")
-        print(f"Version: {VERSION}")
-        print(f"Martin Lehmann, {YEAR}")
+        print(f"Author: {AUTHOR}")
+        print(f"Version: {VERSION}, {YEAR}")
         print("Licence: BSD-2-Clause")
         print("Source code: https://github.com/MM-Lehmann/pptx2h5p")
         if len(sys.argv) != 2:
@@ -106,15 +107,15 @@ if __name__ == "__main__":
 
         # extract metadata
         filepath = os.path.abspath(sys.argv[1])
-        print(f"extracting images from:\n\t {filepath}")
+        if not os.path.exists(filepath):
+            print(f"No such file: {filepath}", file=sys.stderr)
+            sys.exit(-1)
         folder = os.path.dirname(filepath)
         filename = os.path.basename(filepath)
         title = os.path.splitext(filename)[0]
-        if not os.path.exists(filepath):
-            print("No such file!", file=sys.stderr)
-            sys.exit(-1)
 
         # extract images
+        print(f"extracting images from:\n\t {filepath}")
         ppt2image(filepath)
         image_folder = os.path.join(folder, title)
         images = natsorted(os.listdir(image_folder))

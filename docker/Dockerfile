@@ -1,5 +1,5 @@
 FROM tobix/pywine
-MAINTAINER Martin Lehmann (https://github.com/MM-Lehmann)
+LABEL author="Martin Lehmann (https://github.com/MM-Lehmann)"
 
 RUN wine pip install pip-tools --no-warn-script-location --no-cache
 
