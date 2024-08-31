@@ -3,8 +3,10 @@
 # Fail on errors.
 set -e
 
-echo "building docker images..."
-docker build -t pptx2h5p/pyinstaller -f docker/Dockerfile .
+echo "updating docker base images..."
+docker pull tobix/pywine
+
+./compile_requirements.sh
 
 echo "building app..."
 docker run -v ".:/src/" pptx2h5p/pyinstaller

@@ -4,9 +4,8 @@ block_cipher = None
 
 
 a = Analysis(['pptx2h5p.py'],
-             pathex=['C:\\Users\\u552588\\PycharmProjects\\pptx2h5p'],
              binaries=[],
-             datas=[('./template','template')],
+             datas=[('requirements.txt', '.')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

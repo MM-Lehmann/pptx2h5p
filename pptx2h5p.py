@@ -1,18 +1,38 @@
 import json
 import os
+import re
 import sys
 import uuid
 from copy import deepcopy
-from zipfile import ZipFile, ZIP_DEFLATED
-
+from get_image_size import get_image_size
 from natsort import natsorted
 from win32com import client
-from get_image_size import get_image_size
+from zipfile import ZipFile, ZIP_DEFLATED
 
 VERSION = "1.3.1"
 YEAR = "2024"
 AUTHOR = "Martin Lehmann"
 target_ratio = 2  # target aspect ratio for slides in h5p
+reserved_files = [r"content\content.json", r".\h5p.json"]
+
+if getattr(sys, "frozen", False):  # calling packaged binary
+    basedir = sys._MEIPASS  # type: ignore
+else:  # calling local script
+    basedir = os.path.dirname(os.path.abspath(__file__))
+template_folder = os.path.join(basedir, "template")
+
+
+def get_pyinstaller_version():
+    req_file = os.path.join(basedir, "requirements.txt")
+    try:
+        with open(req_file, "r") as file:
+            for line in file:
+                # Look for a line that starts with 'pyinstaller=='
+                match = re.match(r'^pyinstaller==(\d+\.\d+\.\d+)', line.strip(), re.IGNORECASE)
+                if match:
+                    return match.group(1)
+    except FileNotFoundError:
+        return "PyInstaller version information not available"
 
 
 def ppt2image(file):
@@ -34,20 +54,13 @@ def ppt2image(file):
 
 
 def add_to_json(newfile, image_folder, images, title):
-    reserved_files = ["content\content.json", ".\h5p.json"]
-    if getattr(sys, "frozen", False):  # calling packaged binary
-        basedir = sys._MEIPASS
-    else:  # calling local script
-        basedir = os.path.dirname(os.path.abspath(__file__))
-    template = os.path.join(basedir, "template")
-
     img_width, img_height = get_image_size(os.path.join(image_folder, images[0]))
 
     with ZipFile(newfile, "w", compression=ZIP_DEFLATED) as zout:
         # add all other files to zip
-        for dir_, _, files in os.walk(template):
+        for dir_, _, files in os.walk(template_folder):
             for file in files:
-                rel_dir = os.path.relpath(dir_, template)
+                rel_dir = os.path.relpath(dir_, template_folder)
                 rel_file = os.path.join(rel_dir, file)
                 abs_file = os.path.join(dir_, file)
                 if rel_file in reserved_files:
@@ -55,7 +68,7 @@ def add_to_json(newfile, image_folder, images, title):
                 zout.write(abs_file, rel_file)
 
         # add image filenames to content.json
-        with open(template + "/content/content.json") as fp:
+        with open(template_folder + "/content/content.json") as fp:
             content = json.load(fp)
         print(f"adding images from::\n\t {image_folder} {images}")
         for i, image in enumerate(images):
@@ -87,7 +100,7 @@ def add_to_json(newfile, image_folder, images, title):
             zout.write(os.path.join(image_folder, image), "content/images/" + image)
 
         # change presentation title
-        with open(template + "/h5p.json", "r") as h5p:
+        with open(template_folder + "/h5p.json", "r") as h5p:
             content = json.load(h5p)
             content["title"] = title
         zout.writestr("h5p.json", json.dumps(content))
@@ -99,17 +112,15 @@ if __name__ == "__main__":
         print("Powerpoint to h5p Converter.")
         print(f"Author: {AUTHOR}")
         print(f"Version: {VERSION}, {YEAR}")
+        print(f"Pyinstaller version: {get_pyinstaller_version()}")
         print("Licence: BSD-2-Clause")
         print("Source code: https://github.com/MM-Lehmann/pptx2h5p")
-        if len(sys.argv) != 2:
-            print("Usage : python pptx2h5p.py [file]", file=sys.stderr)
-            sys.exit(-1)
+        assert len(sys.argv) == 2, "Usage : pptx2h5p.exe [file]"
 
         # extract metadata
         filepath = os.path.abspath(sys.argv[1])
-        if not os.path.exists(filepath):
-            print(f"No such file: {filepath}", file=sys.stderr)
-            sys.exit(-1)
+        assert os.path.exists(filepath), f"No such file: {filepath}"
+
         folder = os.path.dirname(filepath)
         filename = os.path.basename(filepath)
         title = os.path.splitext(filename)[0]
@@ -126,11 +137,13 @@ if __name__ == "__main__":
         add_to_json(newfilename, image_folder, images, title)
         print("Converting successfully finished.")
         input(
-            "Press Enter to delete temporary image (export) folder and close this window."
+            f"Press 'Enter' to delete temporary image folder and close this window."
         )
         for image in images:
             os.remove(os.path.join(image_folder, image))
         os.rmdir(image_folder)
+
     except Exception as e:
         print(e, file=sys.stderr)
-        input("An error has occured. Press Enter to close this window.")
+        input("Press 'Enter' to close this window.")
+        sys.exit(-1)

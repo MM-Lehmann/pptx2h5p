@@ -1,2 +1,3 @@
 natsort
 pywin32
+pyinstaller==6.10.0
