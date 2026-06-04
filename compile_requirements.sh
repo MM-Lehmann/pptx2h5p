@@ -4,7 +4,7 @@
 set -e
 
 echo "building docker images..."
-docker build -t pptx2h5p/pyinstaller -f docker/Dockerfile .
+docker build -t pptx2h5p/pyinstaller -f docker/Dockerfile_piptools .
 
 echo "compiling requirements.text from requirements.in..."
 docker run -v ".:/src/" pptx2h5p/pyinstaller wine pip-compile

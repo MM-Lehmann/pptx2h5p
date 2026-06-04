@@ -4,7 +4,7 @@
 set -e
 
 echo "building docker images..."
-docker build -t pptx2h5p/pyinstaller -f docker/Dockerfile .
+docker build -t pptx2h5p/pyinstaller -f docker/Dockerfile_pyinstaller .
 
 echo "building app..."
 docker run -v ".:/src/" pptx2h5p/pyinstaller
