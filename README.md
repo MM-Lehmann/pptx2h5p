@@ -17,3 +17,10 @@ pptx2h5p makes use of the COM interface offered by an installed powerpoint on th
 2. exports each slide as .png file
 3. analyses images for width/height to adjust scaling for h5p
 4. imports the .png files into an .hp5 archive (it's a zip essentially)
+
+## Developer guide
+pptx2h5p is expected to compile under linux. All necessary build environments come packaged as docker containers. There is no local python environment required. But as its target platform is windows, a wine container is used to run pyinstaller and find appropriate python library versions running under windows. Everything is pretty much streamlined with a few shell scripts (basically `compile_requirements.sh` and `build.sh`, you can use a shortcut wrapper `update_compile_build.sh` if you wish).
+
+Building everything under Windows directly is a valid option but requires a complete remake of the toolchain, which I don't see the point of at this point. If you're stuck with windows as an operating system, install WSL2 (windows subsystem for linux) into the system. I recommend using Visual Studio Code as it has good integration of WSL, docker, git and a terminal, all you need.
+
+Any doubts, just reach out to me.
