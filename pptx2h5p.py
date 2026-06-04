@@ -9,8 +9,8 @@ from natsort import natsorted
 from win32com import client
 from zipfile import ZipFile, ZIP_DEFLATED
 
-VERSION = "1.3.1"
-YEAR = "2024"
+VERSION = "1.3.2"
+YEAR = "2026"
 AUTHOR = "Martin Lehmann"
 target_ratio = 2  # target aspect ratio for slides in h5p
 reserved_files = [r"content\content.json", r".\h5p.json"]
